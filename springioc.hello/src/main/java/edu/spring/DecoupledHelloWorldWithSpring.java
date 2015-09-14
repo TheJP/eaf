@@ -8,7 +8,8 @@ import org.springframework.core.io.ClassPathResource;
 
 @SuppressWarnings("deprecation")
 public class DecoupledHelloWorldWithSpring {
-	private static BeanFactory getBeanFactory() {
+
+	public static BeanFactory getBeanFactory() {
 		XmlBeanFactory factory = new XmlBeanFactory(new ClassPathResource("helloConfig.xml"));
 		return factory;
 	}
