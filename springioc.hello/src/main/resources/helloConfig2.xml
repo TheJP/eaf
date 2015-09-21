@@ -8,11 +8,17 @@
       http://www.springframework.org/schema/context
       http://www.springframework.org/schema/context/spring-context-4.2.xsd">
 
-	<context:property-placeholder location="classpath:app.properties" />
-	<bean id="renderer" class="edu.spring.StandardOutRenderer">
-		<property name="messageProvider" ref="provider" />
-	</bean>
-	<bean id="provider" class="edu.spring.CustomMessageProvider">
-		<constructor-arg name="message" value="${hello.message}" />
-	</bean>
+    <context:property-placeholder location="classpath:app.properties" />
+    <bean id="renderer" class="edu.spring.StandardOutRenderer">
+        <property name="messageProvider" ref="provider" />
+    </bean>
+    <!-- <bean class="edu.spring.StandardOutRenderer">
+        <property name="messageProvider" ref="provider" />
+    </bean> -->
+    <bean id="provider" class="edu.spring.CustomMessageProvider">
+        <constructor-arg name="message" value="${hello.message}" />
+    </bean>
+    <bean id="dummy" class="edu.spring.DummyMessageProvider">
+        <constructor-arg name="message" value="${hello.message}" />
+    </bean>
 </beans>

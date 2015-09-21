@@ -9,6 +9,7 @@ public class HelloWorldApplicationContext {
 		@SuppressWarnings("resource")
 		ApplicationContext context = new ClassPathXmlApplicationContext("helloConfig2.xml");
 		MessageRenderer renderer = (MessageRenderer) context.getBean("renderer");
+//		MessageRenderer renderer = (MessageRenderer) context.getBean(MessageRenderer.class);
 		renderer.render();
 	}
 
