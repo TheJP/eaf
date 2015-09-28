@@ -4,7 +4,7 @@ import java.util.Calendar;
 import java.util.Date;
 
 
-public class Rental {
+public class Rental extends ModelBase {
 	private Long id;
 	
 	private Movie movie;

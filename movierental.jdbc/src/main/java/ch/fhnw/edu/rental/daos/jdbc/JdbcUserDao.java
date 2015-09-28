@@ -1,6 +1,6 @@
 package ch.fhnw.edu.rental.daos.jdbc;
 
-import static ch.fhnw.edu.rental.daos.jdbc.JdbcTemplateUtils.*;
+import static ch.fhnw.edu.rental.daos.jdbc.JdbcTemplateUtils.update;
 
 import java.util.List;
 
@@ -31,7 +31,7 @@ public class JdbcUserDao extends JdbcDaoSupport implements UserDao {
 
 	@Override
 	public User getById(Long id) {
-		return getJdbcTemplate().query("SELECT * FROM USERS WHERE USER_ID = ?", get, id).get(0);
+		return getJdbcTemplate().queryForObject("SELECT * FROM USERS WHERE USER_ID = ?", get, id);
 	}
 
 	@Override

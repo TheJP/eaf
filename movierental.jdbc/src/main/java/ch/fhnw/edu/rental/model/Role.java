@@ -1,6 +1,6 @@
 package ch.fhnw.edu.rental.model;
 
-public class Role {
+public class Role extends ModelBase {
 	private Long id;
 
 	private String roleName;

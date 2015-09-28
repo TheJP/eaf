@@ -3,7 +3,7 @@ package ch.fhnw.edu.rental.model;
 import java.util.ArrayList;
 import java.util.List;
 
-public class User {
+public class User extends ModelBase {
 	private Long id;
 
 	private String lastName;

@@ -1,7 +1,7 @@
 package ch.fhnw.edu.rental.model;
 
 
-public abstract class PriceCategory {
+public abstract class PriceCategory extends ModelBase {
 	private Long id;
 
 	public Long getId() {
