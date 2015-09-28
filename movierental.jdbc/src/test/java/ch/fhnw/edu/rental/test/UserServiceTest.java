@@ -21,7 +21,7 @@ import ch.fhnw.edu.rental.services.RentalService;
 import ch.fhnw.edu.rental.services.UserService;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {"/application.xml", "/datasource-memory.xml"})
+@ContextConfiguration(locations = {"/application.xml", "/datasource-jdbc.xml"})
 @Transactional
 public class UserServiceTest {
 

@@ -22,7 +22,7 @@ import ch.fhnw.edu.rental.services.MovieService;
 import ch.fhnw.edu.rental.services.RentalServiceException;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {"/application.xml", "/datasource-memory.xml"})
+@ContextConfiguration(locations = {"/application.xml", "/datasource-jdbc.xml"})
 @Transactional
 public class MovieServiceTest {
 	

@@ -125,8 +125,6 @@ public class BusinessLogicLocal implements BusinessLogic {
 	}
 
 	public void visitMovies(MovieVisitor visitor) {
-		// FIXME fixme
-		System.out.println(movieService);
 		for(Movie m : movieService.getAllMovies()){
 			visitor.visit(m.getId(), m.getTitle(), m.getReleaseDate(), m.isRented(), m.getPriceCategory().toString());
 		}
