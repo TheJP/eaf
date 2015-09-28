@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+	<!-- all the DAOs -->
+	<bean id="userDao" class="ch.fhnw.edu.rental.daos.mem.MemoryUserDao">
+		<property name="rentalDao" ref="rentalDao"/>
+	</bean>
+	
+	<bean id="movieDao" class="ch.fhnw.edu.rental.daos.mem.MemoryMovieDao">
+		<property name="priceCategoryDao" ref="priceCategoryDao"/>
+	</bean>
+	
+	<bean id="rentalDao" class="ch.fhnw.edu.rental.daos.mem.MemoryRentalDao">
+		<property name="movieDao" ref="movieDao"/>
+		<property name="userDao" ref="userDao"/>
+	</bean>
+	
+	<bean id="priceCategoryDao" class="ch.fhnw.edu.rental.daos.mem.MemoryPriceCategoryDao"/>
+	
+	<bean id="transactionManager" class="ch.fhnw.edu.rental.daos.mem.TransactionManager" init-method="resetData"/>
+
+</beans>
