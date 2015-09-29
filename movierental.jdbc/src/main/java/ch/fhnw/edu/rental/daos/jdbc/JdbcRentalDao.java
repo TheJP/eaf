@@ -25,6 +25,7 @@ public class JdbcRentalDao extends JdbcDaoSupport implements RentalDao {
 	private RowMapper<Rental> get = (rs, row) -> {
 		Long id = rs.getLong("RENTAL_ID");
 		Rental rental = rentals.containsKey(id) ? rentals.get(id) : new Rental();
+		rental.setId(id);
 		rental.setRentalDate(rs.getDate("RENTAL_RENTALDATE"));
 		rental.setRentalDays(rs.getInt("RENTAL_RENTALDAYS"));
 		rental.setMovie(movieDao.getById(rs.getLong("MOVIE_ID")));
@@ -64,18 +65,18 @@ public class JdbcRentalDao extends JdbcDaoSupport implements RentalDao {
 				"INSERT INTO RENTALS (RENTAL_RENTALDATE, RENTAL_RENTALDAYS, MOVIE_ID, USER_ID) VALUES (?, ?, ?, ?)", "RENTAL_ID",
 				(ps) -> {
 					try {
-						ps.setDate(1, new java.sql.Date(rental.getRentalDate().getTime()));
+						ps.setDate(1, rental.getRentalDate() == null ? null : new java.sql.Date(rental.getRentalDate().getTime()));
 						ps.setInt(2, rental.getRentalDays());
-						ps.setLong(3, rental.getMovie().getId());
-						ps.setLong(4, rental.getUser().getId());
-					} catch (Exception e) { }
+						ps.setLong(3, rental.getMovie() == null ? 0 : rental.getMovie().getId());
+						ps.setLong(4, rental.getUser() == null ? 0 : rental.getUser().getId());
+					} catch (Exception e) { e.printStackTrace();}
 				});
 			rental.setId(id);
 			rentals.put(id, rental);
 		} else {
 			getJdbcTemplate().update(
 				"UPDATE RENTALS SET RENTAL_RENTALDATE = ?, RENTAL_RENTALDAYS = ?, MOVIE_ID = ?, USER_ID = ? WHERE RENTAL_ID = ?",
-				rental.getRentalDate(), rental.getRentalDays(), rental.getMovie().getId(), rental.getUser().getId());
+				rental.getRentalDate(), rental.getRentalDays(), rental.getMovie().getId(), rental.getUser().getId(), rental.getId());
 			rentals.put(rental.getId(), rental);
 		}
 	}
@@ -85,6 +86,7 @@ public class JdbcRentalDao extends JdbcDaoSupport implements RentalDao {
 		getJdbcTemplate().update("DELETE FROM RENTALS WHERE RENTAL_ID = ?", rental.getId());
 		rental.setDeleted(true);
 		rentals.remove(rental.getId());
+		rental.setId(null);
 	}
 
 }

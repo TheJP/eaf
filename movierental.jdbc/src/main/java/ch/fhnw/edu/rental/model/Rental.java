@@ -22,11 +22,11 @@ public class Rental extends ModelBase {
 			throw new IllegalStateException("movie is already rented!");
 		}
 		this.user = user;
-		user.getRentals().add(this);
 		this.movie = movie;
 		movie.setRented(true);
 		this.rentalDays = rentalDays;
 		this.rentalDate = Calendar.getInstance().getTime();
+		user.getRentals().add(this); //Bad practice!
 	}
 	
 	public Rental(User user, Movie movie, int rentalDays, Date rentalDate) {

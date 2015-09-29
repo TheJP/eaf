@@ -26,7 +26,7 @@ public class JdbcUserDao extends JdbcDaoSupport implements UserDao {
 		user.setFirstName(rs.getString("USER_FIRSTNAME"));
 		user.setId(rs.getLong("USER_ID"));
 		user.setEmail(rs.getString("USER_EMAIL"));
-		user.setRentals(new LazyList<>(() -> rentalDao.getRentalsByUser(user)));
+		user.setRentals(new LazyList<>(() -> rentalDao.getRentalsByUser(user), rentalDao));
 		users.put(id, user);
 		return user;
 	};
@@ -64,7 +64,7 @@ public class JdbcUserDao extends JdbcDaoSupport implements UserDao {
 					} catch (Exception e) { }
 				});
 			user.setId(id);
-			user.setRentals(new LazyList<>(() -> rentalDao.getRentalsByUser(user)));
+			user.setRentals(new LazyList<>(() -> rentalDao.getRentalsByUser(user), rentalDao));
 			users.put(id, user);
 		} else {
 			getJdbcTemplate().update(
@@ -77,9 +77,11 @@ public class JdbcUserDao extends JdbcDaoSupport implements UserDao {
 	@Override
 	public void delete(User user) {
 		if(user.getId() == null){ return; }
+		user.getRentals().stream().forEach(rental -> rentalDao.delete(rental));
 		getJdbcTemplate().update("DELETE FROM USERS WHERE USER_ID = ?", user.getId());
 		user.setDeleted(true);
 		users.remove(user.getId());
+		user.setId(null);
 	}
 
 }

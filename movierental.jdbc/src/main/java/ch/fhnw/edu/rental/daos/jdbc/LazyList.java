@@ -1,22 +1,28 @@
 package ch.fhnw.edu.rental.daos.jdbc;
 
-import java.util.Collection;
-import java.util.Collections;
+import java.util.AbstractList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
+import ch.fhnw.edu.rental.daos.Dao;
 import ch.fhnw.edu.rental.model.ModelBase;
 
-public class LazyList<T extends ModelBase> implements List<T> {
+public class LazyList<T extends ModelBase> extends AbstractList<T> {
 
 	private List<T> list = null;
 	private Supplier<List<T>> producer;
+	private Dao<T> dao;
 
 	public LazyList(Supplier<List<T>> producer){
 		this.producer = producer;
+		dao = null;
+	}
+
+	public LazyList(Supplier<List<T>> producer, Dao<T> dao){
+		this.producer = producer;
+		this.dao = dao;
 	}
 
 	private List<T> getList(){
@@ -30,70 +36,58 @@ public class LazyList<T extends ModelBase> implements List<T> {
 	@Override
 	public int size() { return getList().size(); }
 
+	@SuppressWarnings("unchecked")
 	@Override
-	public boolean isEmpty() { return getList().isEmpty(); }
-
-	@Override
-	public boolean contains(Object o) { return getList().contains(o); }
-
-	@Override
-	public Iterator<T> iterator() { return Collections.unmodifiableList(getList()).iterator(); }
-
-	@Override
-	public Object[] toArray() { return getList().toArray(); }
-
-	@Override
-	public <T2> T2[] toArray(T2[] a) { return getList().toArray(a); }
-
-	@Override
-	public boolean add(T e) { throw new UnsupportedOperationException(); }
-
-	@Override
-	public boolean remove(Object o) { throw new UnsupportedOperationException(); }
-
-	@Override
-	public boolean containsAll(Collection<?> c) { return getList().containsAll(c); }
-
-	@Override
-	public boolean addAll(Collection<? extends T> c) { throw new UnsupportedOperationException(); }
-
-	@Override
-	public boolean addAll(int index, Collection<? extends T> c) { throw new UnsupportedOperationException(); }
-
-	@Override
-	public boolean removeAll(Collection<?> c) { throw new UnsupportedOperationException(); }
-
-	@Override
-	public boolean retainAll(Collection<?> c) { throw new UnsupportedOperationException(); }
-
-	@Override
-	public void clear() { throw new UnsupportedOperationException(); }
+	public boolean remove(Object o) {
+		if(dao == null){ throw new UnsupportedOperationException(); }
+		boolean result = getList().remove(o);
+		if(result){ dao.delete((T)o); }
+		return result;
+	}
 
 	@Override
 	public T get(int index) { return getList().get(index); }
 
 	@Override
-	public T set(int index, T element) { throw new UnsupportedOperationException(); }
+	public boolean add(T item) {
+		if(dao == null){ throw new UnsupportedOperationException(); }
+		boolean result = getList().add(item);
+		if(result){ dao.saveOrUpdate(item); }
+		return result;
+	}
 
 	@Override
-	public void add(int index, T element) { throw new UnsupportedOperationException(); }
+	public T remove(int index) {
+		if(dao == null){ throw new UnsupportedOperationException(); }
+		T item = getList().remove(index);
+		dao.delete(item);
+		return item;
+	}
 
 	@Override
-	public T remove(int index) { throw new UnsupportedOperationException(); }
+	public Iterator<T> iterator() {
+		return new Iterator<T>() {
 
-	@Override
-	public int indexOf(Object o) { return getList().indexOf(o); }
+			private Iterator<T> itr = getList().iterator();
+			private T next = itr.hasNext() ? itr.next() : null;
 
-	@Override
-	public int lastIndexOf(Object o) { return getList().lastIndexOf(o); }
+			@Override
+			public boolean hasNext() {
+				return next != null && !next.isDeleted();
+			}
 
-	@Override
-	public ListIterator<T> listIterator() { return Collections.unmodifiableList(getList()).listIterator(); }
+			@Override
+			public T next() {
+				T tmp = next;
+				next = itr.hasNext() ? itr.next() : null;
+				return tmp;
+			}
 
-	@Override
-	public ListIterator<T> listIterator(int index) { return Collections.unmodifiableList(getList()).listIterator(index); }
-
-	@Override
-	public List<T> subList(int fromIndex, int toIndex) { return Collections.unmodifiableList(getList()).subList(fromIndex, toIndex); }
-
+			@Override
+			public void remove() {
+				if(next != null){ dao.delete(next); }
+				itr.remove();
+			}
+		};
+	}
 }

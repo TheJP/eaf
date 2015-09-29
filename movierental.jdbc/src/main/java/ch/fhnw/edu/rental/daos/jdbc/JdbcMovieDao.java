@@ -58,9 +58,9 @@ public class JdbcMovieDao extends JdbcDaoSupport implements MovieDao {
 				(ps) -> {
 					try {
 						ps.setString(1, movie.getTitle());
-						ps.setDate(2, new java.sql.Date(movie.getReleaseDate().getTime()));
+						ps.setDate(2, movie.getReleaseDate() == null ? null : new java.sql.Date(movie.getReleaseDate().getTime()));
 						ps.setBoolean(3, movie.isRented());
-						ps.setLong(4, movie.getPriceCategory().getId());
+						ps.setLong(4, movie.getPriceCategory() == null ? null : movie.getPriceCategory().getId());
 					} catch (Exception e) { }
 				});
 			movie.setId(id);
@@ -78,6 +78,7 @@ public class JdbcMovieDao extends JdbcDaoSupport implements MovieDao {
 		getJdbcTemplate().update("DELETE FROM MOVIES WHERE MOVIE_ID = ?", movie.getId());
 		movie.setDeleted(true);
 		movies.remove(movie.getId());
+		movie.setId(null);
 	}
 
 }
