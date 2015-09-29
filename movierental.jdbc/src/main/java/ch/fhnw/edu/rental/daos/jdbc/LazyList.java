@@ -20,9 +20,9 @@ public class LazyList<T extends ModelBase> implements List<T> {
 	}
 
 	private List<T> getList(){
-		if(list == null){
+//		if(list == null){
 			list = producer.get();
-		}
+//		}
 		list = list.stream().filter(item -> !item.isDeleted()).collect(Collectors.toList());
 		return list;
 	}

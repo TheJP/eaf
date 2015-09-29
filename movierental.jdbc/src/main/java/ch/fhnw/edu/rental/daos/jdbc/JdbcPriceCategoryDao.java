@@ -23,7 +23,7 @@ public class JdbcPriceCategoryDao implements PriceCategoryDao {
 		data.put(1L, pc);
 
 		pc = new PriceCategoryChildren();
-		pc.setId(2L);;
+		pc.setId(2L);
 		data.put(2L, pc);
 
 		pc = new PriceCategoryNewRelease();

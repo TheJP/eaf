@@ -2,7 +2,9 @@ package ch.fhnw.edu.rental.daos.jdbc;
 
 import static ch.fhnw.edu.rental.daos.jdbc.JdbcTemplateUtils.update;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.support.JdbcDaoSupport;
@@ -13,15 +15,19 @@ import ch.fhnw.edu.rental.model.User;
 
 public class JdbcUserDao extends JdbcDaoSupport implements UserDao {
 
-	@SuppressWarnings("unused")
 	private RentalDao rentalDao;
 
+	private Map<Long, User> users = new HashMap<>();
+
 	private RowMapper<User> get = (rs, row) -> {
-		User user = new User(
-			rs.getString("USER_NAME"),
-			rs.getString("USER_FIRSTNAME"));
+		Long id = rs.getLong("USER_ID");
+		User user = users.containsKey(id) ? users.get(id) : new User("", "");
+		user.setLastName(rs.getString("USER_NAME"));
+		user.setFirstName(rs.getString("USER_FIRSTNAME"));
 		user.setId(rs.getLong("USER_ID"));
 		user.setEmail(rs.getString("USER_EMAIL"));
+		user.setRentals(new LazyList<>(() -> rentalDao.getRentalsByUser(user)));
+		users.put(id, user);
 		return user;
 	};
 
@@ -58,10 +64,13 @@ public class JdbcUserDao extends JdbcDaoSupport implements UserDao {
 					} catch (Exception e) { }
 				});
 			user.setId(id);
+			user.setRentals(new LazyList<>(() -> rentalDao.getRentalsByUser(user)));
+			users.put(id, user);
 		} else {
 			getJdbcTemplate().update(
 				"UPDATE USERS SET USER_NAME = ?, USER_FIRSTNAME = ?, USER_EMAIL = ? WHERE USER_ID = ?",
 				user.getLastName(), user.getFirstName(), user.getEmail(), user.getId());
+			users.put(user.getId(), user);
 		}
 	}
 
@@ -69,6 +78,8 @@ public class JdbcUserDao extends JdbcDaoSupport implements UserDao {
 	public void delete(User user) {
 		if(user.getId() == null){ return; }
 		getJdbcTemplate().update("DELETE FROM USERS WHERE USER_ID = ?", user.getId());
+		user.setDeleted(true);
+		users.remove(user.getId());
 	}
 
 }
