@@ -69,24 +69,31 @@ public class LazyList<T extends ModelBase> extends AbstractList<T> {
 		return new Iterator<T>() {
 
 			private Iterator<T> itr = getList().iterator();
-			private T next = itr.hasNext() ? itr.next() : null;
+			private T next = getNext();
+
+			private T getNext(){
+				T n = null;
+				do {
+					n = itr.hasNext() ? itr.next() : null;
+				} while(n != null && n.isDeleted());
+				return n;
+			}
 
 			@Override
 			public boolean hasNext() {
-				return next != null && !next.isDeleted();
+				return next != null;
 			}
 
 			@Override
 			public T next() {
 				T tmp = next;
-				next = itr.hasNext() ? itr.next() : null;
+				next = getNext();
 				return tmp;
 			}
 
 			@Override
 			public void remove() {
 				if(next != null){ dao.delete(next); }
-				itr.remove();
 			}
 		};
 	}

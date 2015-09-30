@@ -1,11 +1,11 @@
 package ch.fhnw.edu.rental.daos.jdbc;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.sql.DataSource;
+import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.support.JdbcDaoSupport;
 
 import ch.fhnw.edu.rental.daos.PriceCategoryDao;
 import ch.fhnw.edu.rental.model.PriceCategory;
@@ -13,63 +13,44 @@ import ch.fhnw.edu.rental.model.PriceCategoryChildren;
 import ch.fhnw.edu.rental.model.PriceCategoryNewRelease;
 import ch.fhnw.edu.rental.model.PriceCategoryRegular;
 
-public class JdbcPriceCategoryDao implements PriceCategoryDao {
+public class JdbcPriceCategoryDao extends JdbcDaoSupport implements PriceCategoryDao {
 
-	////////////// this is an in-memory implementation => to be replaced
-	private Map<Long, PriceCategory> data = new HashMap<>();
-	{
-		PriceCategory pc = new PriceCategoryRegular();
-		pc.setId(1L);
-		data.put(1L, pc);
+	private Map<Long, PriceCategory> categories = new HashMap<>();
 
-		pc = new PriceCategoryChildren();
-		pc.setId(2L);
-		data.put(2L, pc);
+	private RowMapper<PriceCategory> get = (rs, row) -> {
+		Long id = rs.getLong("PRICECATEGORY_ID");
+		String type = rs.getString("PRICECATEGORY_TYPE");
+		PriceCategory category = categories.containsKey(id) ? categories.get(id) : getCatByType(type);
+		category.setId(id);
+		return category;
+	};
 
-		pc = new PriceCategoryNewRelease();
-		pc.setId(3L);;
-		data.put(3L, pc);
-	}
-
-	@Override
-	public List<PriceCategory> getAll() {
-		return new ArrayList<PriceCategory>(data.values());
+	private PriceCategory getCatByType(String type){
+		switch(type){
+			case "Regular": return new PriceCategoryRegular();
+			case "Children": return new PriceCategoryChildren();
+			case "NewRelease": return new PriceCategoryNewRelease();
+			default: throw new IllegalArgumentException("Unknown category");
+		}
 	}
 
 	@Override
 	public PriceCategory getById(Long id) {
-		return data.get(id);
-	}
-	////////////////////////////////////////////////////////////////////
-
-	@SuppressWarnings("unused")
-	private DataSource ds;
-
-	public void setDataSource(DataSource dataSource) {
-		this.ds = dataSource;
+		return getJdbcTemplate().queryForObject("SELECT * FROM PRICECATEGORIES WHERE PRICECATEGORY_ID = ?", get, id);
 	}
 
-//	@Override
-//	public PriceCategory getById(Long id) {
-//		// TODO Auto-generated method stub
-//		return null;
-//	}
-//
-//	@Override
-//	public List<PriceCategory> getAll() {
-//		// TODO Auto-generated method stub
-//		return null;
-//	}
+	@Override
+	public List<PriceCategory> getAll() {
+		return getJdbcTemplate().query("SELECT * FROM PRICECATEGORIES", get);
+	}
 
 	@Override
 	public void saveOrUpdate(PriceCategory priceCategory) {
-		// TODO Auto-generated method stub
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
 	public void delete(PriceCategory priceCategory) {
-		// TODO Auto-generated method stub
 		throw new UnsupportedOperationException();
 	}
 
