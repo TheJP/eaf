@@ -1,0 +1,16 @@
+<settings xmlns="http://maven.apache.org/SETTINGS/1.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0
+                      http://maven.apache.org/xsd/settings-1.0.0.xsd">
+
+	<!--
+		TODO: Specify the full path to your local repository for the correct
+		deployment of the generated jar's of the pat project and store this
+		file under the name local.settings.xml
+		
+		Per default maven stores its repo at
+		<localRepository>C:\Users\xxxxxxxx\.m2\repository</localRepository>
+	-->
+	<localRepository>D:\Maven\repository</localRepository>
+
+</settings>

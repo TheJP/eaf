@@ -1,0 +1,22 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<dataset>
+	<ADDRESS
+		ID="1"
+		STREET="Bahnhofstrasse 6"
+		CITY="Windisch"
+	/>
+	<CUSTOMER
+		ID="1"
+		AGE="22"
+		NAME="Mueller"
+		ADDRESS_ID="1"
+	/>
+	<CUSTOMER
+		ID="2"
+		AGE="23"
+		NAME="Schneider"
+	/>
+	<ORDERS
+		ID="1"
+	/>
+</dataset>

@@ -1,0 +1,67 @@
+<?xml version="1.0"?>
+
+<project name="lab-jpa-2015" basedir="." xmlns:artifact="urn:maven-artifact-ant">
+	<property file="src/main/resources/datasource-jpa.properties" />
+
+	<property name="local.settings.file" value="local.settings.xml" />
+	<property name="lib.dir" value="lib" />
+
+	<!-- initialize maven ant tasks -->
+	<path id="maven-ant-tasks.classpath" path="${lib.dir}/maven-ant-tasks-2.1.0.jar" />
+	<typedef resource="org/apache/maven/artifact/ant/antlib.xml" uri="urn:maven-artifact-ant" 
+		classpathref="maven-ant-tasks.classpath"
+	/>	
+
+	<target name="mvn-init">
+		<artifact:pom file="pom.xml" id="project.pom" />
+		<artifact:dependencies pathId="compile.classpath" filesetId="compile.fileset" useScope="compile" settingsFile="${local.settings.file}">
+			<pom refid="project.pom" />
+		</artifact:dependencies>
+		<artifact:dependencies pathId="test.classpath" filesetId="test.fileset" useScope="test" settingsFile="${local.settings.file}">
+			<pom refid="project.pom" />
+		</artifact:dependencies>
+		<artifact:dependencies pathId="runtime.classpath" filesetId="runtime.fileset" useScope="runtime" settingsFile="${local.settings.file}">
+			<pom refid="project.pom" />
+		</artifact:dependencies>
+	</target>	
+
+	<target name="db.start" depends="mvn-init" description="Start HSQLDB database">
+		<java classname="org.hsqldb.Server" fork="yes" classpathref="runtime.classpath" failonerror="true">
+			<arg value="-database.0" />
+			<arg value="${database.dir}/${database.name}" />
+			<arg value="-dbname.0" />
+			<arg value="${database.name}" />
+		</java>
+	</target>
+
+	<target name="db.stop" depends="mvn-init" description="Stop HSQLDB database">
+		<sql
+			driver="${jdbc.driverClassName}"
+			url="${jdbc.local.url}"
+			userid="${jdbc.username}"
+			password="${jdbc.password}"
+		>
+			SHUTDOWN
+			<classpath>
+				<path refid="runtime.classpath" />
+			</classpath>
+		</sql>
+	</target>
+	
+	<target name="db.manager" depends="mvn-init" description="Start HSQLDB manager">
+		<java classname="org.hsqldb.util.DatabaseManagerSwing" fork="yes" classpathref="runtime.classpath" failonerror="true">
+			<arg value="-url" />
+			<arg value="${jdbc.url}" />
+			<arg value="-driver" />
+			<arg value="${jdbc.driverClassName}" />
+		</java>
+	</target>
+	
+	<target name="db.clean" description="Clean HSQLDB">
+		<delete>
+			<fileset dir="${database.dir}" includes="${database.name}.*" />
+		</delete>
+	</target>
+
+
+</project>
