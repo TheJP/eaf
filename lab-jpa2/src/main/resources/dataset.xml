@@ -1,0 +1,38 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<dataset>
+	<USER
+		ID="1"
+		EMAIL="peter.muster@fhnw.ch"
+		FIRSTNAME="Peter"
+		LASTNAME="Muster"
+	/>
+	<USER
+		ID="2"
+		EMAIL="juerg.luthiger@fhnw.ch"
+		FIRSTNAME="Juerg"
+		LASTNAME="Luthiger"
+	/>
+	<MOVIE
+		ID='1'
+		TITLE='Ex Machina'
+		RENTED='1'
+		RELEASEDATE='2015-07-14'/>		
+	<MOVIE
+		ID='2'
+		TITLE='Paddington'
+		RENTED='0'
+		RELEASEDATE='2015-04-28'/>		
+	<MOVIE
+		ID='3'
+		TITLE='Interstellar'
+		RENTED='0'
+		RELEASEDATE='2015-03-31'/>		
+	
+	<RENTAL 
+		ID='1'
+		RENTALDATE='2015-10-22'
+		RENTALDAYS='7'
+		USER_ID='1'
+		MOVIE_ID='1'/>					
+	
+</dataset>
