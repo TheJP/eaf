@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans
+	xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation=
+		"http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+	<bean id="accountService" class="ch.fhnw.edu.bank.AccountServiceImpl"/>
+	
+	<bean class="org.springframework.remoting.rmi.RmiServiceExporter">
+		<property name="serviceName" value="AccountService"/>
+		<property name="service" ref="accountService"/>
+		<property name="serviceInterface" value="ch.fhnw.edu.bank.RemoteAccountService"/>
+	</bean>
+
+</beans>
