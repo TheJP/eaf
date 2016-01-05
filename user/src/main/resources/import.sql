@@ -1,0 +1,1 @@
+INSERT INTO users (user_id, user_name, user_firstname, user_email) VALUES (1, 'Zürcher', 'Flurina', 'flurina.zuercher@firmax.com'), (2, 'Basler', 'Martin', 'fmartin.basler@basel.com'), (3, 'Berner', 'Jakob', 'jakob.berner@bern.com'), (4, 'Welsch', 'Nadja', 'nadja.welsch@firmax.com');
